@@ -125,6 +125,30 @@ Repeat the same steps to add the shipment PostgreSQL server:
 
 > Note: Use the Docker service names (`postgres-users` and `postgres-shipments`) as the host names because pgAdmin runs in a container on the same Docker network.
 
+## Connect to MongoDB (tracking-service)
+
+The `tracking-service` stores shipment history in MongoDB. Use this connection string in tools or drivers (do not open it in a browser):
+
+`mongodb://mongo:mongo@localhost:27017/tracking_db?authSource=admin`
+
+Options to connect:
+
+1. **MongoDB Compass** — paste the connection string into the connection dialog and click Connect. You will see the `tracking_db` database and collections.
+2. **mongosh (CLI)** — on your host, run:
+
+```bash
+mongosh "mongodb://mongo:mongo@localhost:27017/tracking_db?authSource=admin"
+```
+
+3. **From inside the container** — if you `docker exec -it mongo-tracking mongosh`, `localhost:27017` is correct inside the container; from your host, `localhost:27017` works only if the port is exposed in `docker-compose.yml`.
+4. **IntelliJ Database tool** — add a MongoDB data source and paste the same connection string.
+
+Why MongoDB:
+
+- The tracking store is an appendable event timeline per shipment. MongoDB's document model and flexible schema make it easy to store a shipment document containing an array of events and to evolve that schema without heavy migrations.
+- Fast read patterns for aggregated history queries make MongoDB a pragmatic choice for the `tracking-service` demo.
+
+
 ## 7. Build before running changes
 
 To compile all modules and run tests locally:
