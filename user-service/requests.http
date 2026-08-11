@@ -1,0 +1,11 @@
+### Create a user
+POST http://localhost:8081/users
+Content-Type: application/json
+
+{
+  "name": "user1",
+  "email": "user1@example.com"
+}
+
+### Get the user by id
+GET http://localhost:8081/users/1

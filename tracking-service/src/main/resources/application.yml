@@ -1,0 +1,27 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: tracking-service
+  data:
+    mongodb:
+      uri: mongodb://mongo:mongo@localhost:27017/tracking_db?authSource=admin
+  config:
+    import: optional:configserver:http://localhost:8888
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: tracking-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "com.deliverytracking.trackingservice.kafka"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.deliverytracking.trackingservice.kafka.ShipmentCreatedEvent
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
