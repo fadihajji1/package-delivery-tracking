@@ -48,6 +48,12 @@ Tools:
 > A single PostgreSQL instance with **one database per service** is sufficient for a solo demo project
 > (no need for four separate PostgreSQL instances unless you want to illustrate full physical isolation).
 
+### Why MongoDB for `tracking-service`
+
+- The tracking domain is event-driven: each shipment has a timeline of status events. Storing a shipment document with an embedded events array maps naturally to MongoDB's document model.
+- MongoDB's flexible schema lets us evolve event payloads without frequent relational migrations, and it supports efficient read patterns for returning a shipment's full history.
+- See `docs/05-contribution-guide.md` for connection instructions and tooling examples (MongoDB Compass, `mongosh`, IntelliJ Database tool).
+
 ## 5. Containerization & orchestration
 
 | Component | Choice |

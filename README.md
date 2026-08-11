@@ -62,6 +62,31 @@ mvnw.cmd -pl tracking-service spring-boot:run
 
 > Note: The Postgres containers use named volumes (`postgres-users-data`, `postgres-shipments-data`) — database files persist. We also added `pgadmin-data` volume so saved servers persist across restarts.
 
+## MongoDB access
+
+The tracking data is stored in MongoDB. Use the following connection string (this is for tools and drivers, not a browser URL):
+
+`mongodb://mongo:mongo@localhost:27017/tracking_db?authSource=admin`
+
+Ways to use it:
+
+1. **MongoDB Compass (GUI)** — paste the exact string into the connection dialog and click Connect to browse `tracking_db` and its collections.
+2. **mongosh (CLI)** — run:
+
+```bash
+mongosh "mongodb://mongo:mongo@localhost:27017/tracking_db?authSource=admin"
+```
+
+3. **From inside Docker** — if you exec into the `mongo-tracking` container, `localhost:27017` is correct from inside the container. From your host, `localhost:27017` works only if the port is mapped in `docker-compose.yml`.
+4. **IntelliJ Database tool** — View → Tool Windows → Database → + → Data Source → MongoDB, paste the same connection string.
+
+Why MongoDB is used:
+
+- The tracking data is an event-driven timeline per shipment; MongoDB's document model maps naturally to storing a shipment document with an embedded array of events.
+- It provides flexible schema for evolving event structures and fast reads for aggregated history queries used by the `tracking-service`.
+
+See `docs/05-contribution-guide.md` for more details on connecting tools to the running `mongo-tracking` container.
+
 ## Development tips
 
 - HTTP request collections for manual API testing are at the root of each module:
