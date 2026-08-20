@@ -23,7 +23,16 @@ Each service has its own `application.yml` and is configured to register with Eu
 
 ## 3. Start infrastructure
 
-From the repository root:
+### using custom script (Automatically):
+
+```bash
+.\start-all.ps1
+```
+---
+### OR
+
+---
+### From the repository root (Mannually):
 
 ```bash
 docker compose up -d
