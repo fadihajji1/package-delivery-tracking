@@ -8,7 +8,7 @@ function Start-ServiceJob($name, $delaySeconds) {
     Start-Job -Name $name -ScriptBlock {
         param($path, $log)
         Set-Location $path
-        mvn spring-boot:run *> $log
+        & "$path\..\mvnw.cmd" -pl (Split-Path $path -Leaf) spring-boot:run *> $log
     } -ArgumentList "$root\$name", "$logDir\$name.log" | Out-Null
 }
 
@@ -25,6 +25,8 @@ Start-ServiceJob "api-gateway" 15
 Start-ServiceJob "user-service" 10
 Start-ServiceJob "shipment-service" 10
 Start-ServiceJob "tracking-service" 10
+Start-ServiceJob "delivery-service" 10
+Start-ServiceJob "notification-service" 10
 
 Write-Host ""
 Write-Host "All services launching as background jobs in this terminal."

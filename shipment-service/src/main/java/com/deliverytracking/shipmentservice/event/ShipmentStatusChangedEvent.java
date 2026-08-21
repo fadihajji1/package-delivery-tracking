@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record ShipmentStatusChangedEvent(
         Long shipmentId,
+        Long customerId,
         ShipmentStatus oldStatus,
         ShipmentStatus newStatus,
         LocalDateTime changedAt
