@@ -10,6 +10,8 @@ A Java Spring Cloud microservices demo for package delivery tracking. It demonst
 - `user-service` — user and agent management (port 8081)
 - `shipment-service` — create/manage shipments; produces Kafka events (port 8082)
 - `tracking-service` — consumes Kafka events and stores tracking timeline (port 8083)
+- `delivery-service` — assigns agents and publishes delivery events (port 8084)
+- `notification-service` — consumes business events and stores notification history (port 8085)
 - `docker-compose.yml` — local infra: PostgreSQL, MongoDB, Kafka, pgAdmin, Kafka UI
 - `docs/` — architecture, technical stack, roadmap, deployment, contribution guide
 
@@ -45,6 +47,8 @@ mvnw.cmd -pl api-gateway spring-boot:run
 mvnw.cmd -pl user-service spring-boot:run
 mvnw.cmd -pl shipment-service spring-boot:run
 mvnw.cmd -pl tracking-service spring-boot:run
+mvnw.cmd -pl delivery-service spring-boot:run
+mvnw.cmd -pl notification-service spring-boot:run
 ```
 
 3. Verify services
@@ -61,6 +65,8 @@ mvnw.cmd -pl tracking-service spring-boot:run
 - Add server `postgres-shipments` → Host: `postgres-shipments`, Port: `5432`, User: `postgres`, Password: `postgres`
 
 > Note: The Postgres containers use named volumes (`postgres-users-data`, `postgres-shipments-data`) — database files persist. We also added `pgadmin-data` volume so saved servers persist across restarts.
+
+The delivery and notification databases are available at host ports `5434` and `5435` respectively. Their container-side PostgreSQL port is `5432`.
 
 ## MongoDB access
 
@@ -90,9 +96,14 @@ See `docs/05-contribution-guide.md` for more details on connecting tools to the 
 ## Development tips
 
 - HTTP request collections for manual API testing are at the root of each module:
+  - `discovery-server/requests.http`
+  - `config-server/requests.http`
+  - `api-gateway/requests.http`
   - `user-service/requests.http`
   - `shipment-service/requests.http`
   - `tracking-service/requests.http`
+  - `delivery-service/requests.http`
+  - `notification-service/requests.http`
 
 - Keep tooling and test assets out of `src/main/java`. Module root or `src/test/resources` is preferred.
 

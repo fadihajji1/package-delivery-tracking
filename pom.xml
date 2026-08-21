@@ -41,6 +41,8 @@
         <module>user-service</module>
         <module>shipment-service</module>
         <module>tracking-service</module>
+        <module>delivery-service</module>
+        <module>notification-service</module>
     </modules>
 
 </project>

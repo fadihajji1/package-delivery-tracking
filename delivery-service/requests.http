@@ -1,0 +1,44 @@
+### Assign an existing agent to an existing shipment
+POST http://localhost:8084/deliveries
+Content-Type: application/json
+
+{
+  "shipmentId": 1,
+  "agentId": 4
+}
+
+### Assign the first available agent automatically
+POST http://localhost:8084/deliveries
+Content-Type: application/json
+
+{
+  "shipmentId": 1
+}
+
+### Get a delivery by id
+GET http://localhost:8084/deliveries/1
+
+### Progress a delivery and update the linked shipment
+PATCH http://localhost:8084/deliveries/1/status
+Content-Type: application/json
+
+{
+  "status": "IN_PROGRESS"
+}
+
+### Complete a delivery and update the linked shipment
+PATCH http://localhost:8084/deliveries/1/status
+Content-Type: application/json
+
+{
+  "status": "COMPLETED"
+}
+
+### Assign a delivery through API Gateway discovery routing
+POST http://localhost:8080/DELIVERY-SERVICE/deliveries
+Content-Type: application/json
+
+{
+  "shipmentId": 1,
+  "agentId": 2
+}

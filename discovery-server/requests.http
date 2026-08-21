@@ -1,0 +1,6 @@
+### Open the Eureka dashboard
+GET http://localhost:8761
+
+### Query the Eureka registry API
+GET http://localhost:8761/eureka/apps
+Accept: application/xml

@@ -25,6 +25,30 @@ services:
     volumes:
       - postgres-shipments-data:/var/lib/postgresql/data
 
+  postgres-deliveries:
+    image: postgres:16
+    container_name: postgres-deliveries
+    environment:
+      POSTGRES_DB: deliveries_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-deliveries-data:/var/lib/postgresql/data
+
+  postgres-notifications:
+    image: postgres:16
+    container_name: postgres-notifications
+    environment:
+      POSTGRES_DB: notifications_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-notifications-data:/var/lib/postgresql/data
+
   mongo-tracking:
     image: mongo:7
     container_name: mongo-tracking
@@ -80,5 +104,7 @@ services:
 volumes:
   postgres-users-data:
   postgres-shipments-data:
+  postgres-deliveries-data:
+  postgres-notifications-data:
   mongo-tracking-data:
   pgadmin-data:

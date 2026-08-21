@@ -3,7 +3,9 @@ package com.deliverytracking.shipmentservice.controller;
 import com.deliverytracking.shipmentservice.client.UserDto;
 import com.deliverytracking.shipmentservice.dto.CreateShipmentRequest;
 import com.deliverytracking.shipmentservice.dto.ShipmentResponse;
+import com.deliverytracking.shipmentservice.dto.UpdateShipmentStatusRequest;
 import com.deliverytracking.shipmentservice.event.ShipmentCreatedEvent;
+import com.deliverytracking.shipmentservice.event.ShipmentStatusChangedEvent;
 import com.deliverytracking.shipmentservice.kafka.ShipmentEventProducer;
 import com.deliverytracking.shipmentservice.model.Shipment;
 import com.deliverytracking.shipmentservice.repository.ShipmentRepository;
@@ -55,6 +57,24 @@ public class ShipmentController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shipment not found"));
         return ResponseEntity.ok(toResponse(shipment));
     }
+
+        @PatchMapping("/{id}/status")
+        public ResponseEntity<ShipmentResponse> updateShipmentStatus(
+            @PathVariable Long id,
+                @Valid @RequestBody UpdateShipmentStatusRequest request) {
+        Shipment shipment = shipmentRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shipment not found"));
+
+        var oldStatus = shipment.getStatus();
+        shipment.setStatus(request.status());
+        Shipment saved = shipmentRepository.save(shipment);
+
+        eventProducer.publishStatusChanged(new ShipmentStatusChangedEvent(
+            saved.getId(), saved.getCustomerId(), oldStatus, saved.getStatus(), saved.getUpdatedAt()
+        ));
+
+        return ResponseEntity.ok(toResponse(saved));
+        }
 
     private ShipmentResponse toResponse(Shipment s) {
         return new ShipmentResponse(s.getId(), s.getCustomerId(), s.getStatus(),

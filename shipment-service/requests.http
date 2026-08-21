@@ -1,4 +1,37 @@
+### Create a shipment for an existing customer
 POST http://localhost:8082/shipments
 Content-Type: application/json
 
-{ "customerId": 1, "origin": "Tunis", "destination": "Sfax" }
+{
+	"customerId": 1,
+	"origin": "Tunis",
+	"destination": "Sfax"
+}
+
+### Get a shipment by id
+GET http://localhost:8082/shipments/1
+
+### Update shipment status directly
+ # available statuses:CREATED,
+ #    PICKED_UP,
+ #    IN_TRANSIT,
+ #    OUT_FOR_DELIVERY,
+ #    DELIVERED,
+ #    FAILED
+
+PATCH http://localhost:8082/shipments/1/status
+Content-Type: application/json
+
+{
+	"status": "IN_TRANSIT"
+}
+
+### Create a shipment through API Gateway discovery routing
+POST http://localhost:8080/SHIPMENT-SERVICE/shipments
+Content-Type: application/json
+
+{
+	"customerId":1,
+	"origin": "Sousse",
+	"destination": "Monastir"
+}

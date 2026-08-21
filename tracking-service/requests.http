@@ -1,1 +1,5 @@
+### Get the tracking history for a shipment
 GET http://localhost:8083/tracking/1
+
+### Get tracking history through API Gateway discovery routing
+GET http://localhost:8080/TRACKING-SERVICE/tracking/1

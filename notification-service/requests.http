@@ -1,0 +1,5 @@
+### Get notification history for a customer
+GET http://localhost:8085/notifications/1
+
+### Get notification history through API Gateway discovery routing
+GET http://localhost:8080/NOTIFICATION-SERVICE/notifications/1

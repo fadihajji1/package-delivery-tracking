@@ -1,0 +1,11 @@
+### Fetch delivery-service configuration from Config Server
+GET http://localhost:8888/delivery-service/default
+Accept: application/json
+
+### Fetch shipment-service configuration from Config Server
+GET http://localhost:8888/shipment-service/default
+Accept: application/json
+
+### Fetch tracking-service configuration from Config Server
+GET http://localhost:8888/tracking-service/default
+Accept: application/json

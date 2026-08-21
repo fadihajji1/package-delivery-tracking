@@ -1,0 +1,31 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:postgresql://localhost:5435/notifications_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  config:
+    import: optional:configserver:http://localhost:8888
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "com.deliverytracking.notificationservice.kafka"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.deliverytracking.notificationservice.kafka.ShipmentCreatedEvent
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

@@ -36,4 +36,54 @@ public class ShipmentEventListener {
         trackingRepository.save(record);
         log.info("Saved tracking record for shipmentId={}", event.shipmentId());
     }
+
+        @KafkaListener(
+            topics = "shipment.status-changed",
+            groupId = "tracking-service-group",
+            properties = {
+                "spring.json.value.default.type=com.deliverytracking.trackingservice.kafka.ShipmentStatusChangedEvent",
+                "spring.json.use.type.headers=false"
+            })
+        public void handleShipmentStatusChanged(ShipmentStatusChangedEvent event) {
+        log.info("Received shipment.status-changed event: {}", event);
+
+        TrackingRecord record = trackingRepository.findByShipmentId(event.shipmentId())
+            .orElseGet(TrackingRecord::new);
+
+        record.setShipmentId(event.shipmentId());
+        record.setCustomerId(event.customerId());
+        record.addEvent(new TrackingRecord.TrackingEvent(
+            event.newStatus(),
+            "Shipment status changed from " + event.oldStatus() + " to " + event.newStatus(),
+            event.changedAt()
+        ));
+
+        trackingRepository.save(record);
+        log.info("Saved status change for shipmentId={}", event.shipmentId());
+        }
+
+    @KafkaListener(
+            topics = "delivery.assigned",
+            groupId = "tracking-service-group",
+            properties = {
+                "spring.json.value.default.type=com.deliverytracking.trackingservice.kafka.DeliveryAssignedEvent",
+                "spring.json.use.type.headers=false"
+            })
+    public void handleDeliveryAssigned(DeliveryAssignedEvent event) {
+        log.info("Received delivery.assigned event: {}", event);
+
+        TrackingRecord record = trackingRepository.findByShipmentId(event.shipmentId())
+            .orElseGet(TrackingRecord::new);
+
+        record.setShipmentId(event.shipmentId());
+        record.setCustomerId(event.customerId());
+        record.addEvent(new TrackingRecord.TrackingEvent(
+            "OUT_FOR_DELIVERY",
+            "Delivery assigned to agent " + event.agentId(),
+            event.assignedAt()
+        ));
+
+        trackingRepository.save(record);
+        log.info("Saved delivery assignment for shipmentId={}", event.shipmentId());
+        }
 }

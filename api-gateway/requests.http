@@ -1,0 +1,14 @@
+### Verify the API Gateway is reachable
+GET http://localhost:8080
+
+### Route to user-service through Eureka discovery locator
+GET http://localhost:8080/USER-SERVICE/users/1
+
+### Route to shipment-service through Eureka discovery locator
+GET http://localhost:8080/SHIPMENT-SERVICE/shipments/1
+
+### Route to delivery-service through Eureka discovery locator
+GET http://localhost:8080/DELIVERY-SERVICE/deliveries/1
+
+### Route to tracking-service through Eureka discovery locator
+GET http://localhost:8080/TRACKING-SERVICE/tracking/1
