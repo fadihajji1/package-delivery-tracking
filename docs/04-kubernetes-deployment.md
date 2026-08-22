@@ -117,7 +117,7 @@ spec:
       targetPort: 8081
 ```
 
-> The same pattern applies to `shipment-service`, `delivery-service`, `tracking-service`
+> These manifests are planned. The same pattern will apply to `shipment-service`, `delivery-service`, `tracking-service`
 > (with `MONGODB_URI` instead of `DATASOURCE`) and `notification-service`.
 
 ## 4. External infrastructure (Postgres / MongoDB / Kafka)
@@ -200,7 +200,7 @@ kubectl port-forward svc/api-gateway 8080:8080   # quick local access without In
 
 ## 8. Recommended startup order (dependencies)
 
-1. PostgreSQL, MongoDB, Kafka, Zipkin (infrastructure)
+1. PostgreSQL, MongoDB, Kafka (Zipkin will be added with observability)
 2. config-server
 3. discovery-server
 4. api-gateway

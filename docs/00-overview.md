@@ -28,14 +28,14 @@ This scenario naturally supports:
 
 ## 3. Scope — what is included and what is not
 
-**Included (realistic MVP for one developer):**
+**Included or planned (realistic MVP for one developer):**
 - 5 business microservices plus 3 infrastructure services (Gateway, Discovery, Config)
 - synchronous REST communication and asynchronous Kafka events
 - one PostgreSQL database per transactional service, one MongoDB database for tracking/history
 - Circuit Breaker on critical calls
-- Kubernetes deployment (local with Minikube/Kind or cloud if available)
-- distributed tracing with Zipkin
-- integration tests using Testcontainers
+- Kubernetes deployment (planned; local with Minikube/Kind)
+- distributed tracing with Zipkin (planned)
+- integration tests using Testcontainers (planned)
 
 **Deliberately excluded (out of scope to stay realistic for a solo developer):**
 - complex multi-tenant authentication/authorization (only simple JWT)
@@ -61,8 +61,8 @@ This scenario naturally supports:
 | **config-server** | Centralized configuration (Spring Cloud Config) |
 | **discovery-server** | Service discovery (Netflix Eureka) |
 | **api-gateway** | Single entry point (Spring Cloud Gateway) |
-| **Kafka** | Asynchronous event bus (shipment status events) |
-| **Zipkin** | Distributed tracing |
+| **Kafka** | Asynchronous event bus for shipment and delivery events |
+| **Zipkin** | Distributed tracing (planned) |
 | **Resilience4j** | Circuit breaker / retry / bulkhead (built into services) |
 
 ## 6. Simplified logical diagram
@@ -105,6 +105,8 @@ This scenario naturally supports:
 
 See the following files:
 - `01-architecture.md` — architecture patterns and data flows
-- `02-stack-technique.md` — chosen technologies and rationale
-- `03-routing.md` — step-by-step implementation roadmap
-- `04-deploiement-kubernetes.md` — manifests and deployment strategy
+- `02-technical-stack.md` — chosen technologies and rationale
+- `03-roadmap.md` — step-by-step implementation roadmap
+- `04-kubernetes-deployment.md` — manifests and deployment strategy
+- `06-phase-a-implementation.md` — Phase A implementation details
+- `07-current-project-handoff.md` — current status and next steps

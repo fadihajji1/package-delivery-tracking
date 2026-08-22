@@ -8,7 +8,7 @@
 | **Service Discovery** | Eureka — services are discovered dynamically, no hard-coded IPs |
 | **Externalized Configuration** | Spring Cloud Config Server — centralized config per environment (dev/prod) |
 | **Database per Service** | Each business service owns its own database — no direct sharing |
-| **Saga (choreography, simplified)** | Shipment status progression is driven by Kafka events rather than chained sync calls |
+| **Saga (simplified)** | Delivery-service uses Feign for the immediate shipment update and Kafka for downstream facts |
 | **Circuit Breaker** | Resilience4j on inter-service REST calls (e.g. delivery-service → user-service) |
 | **Light CQRS** | tracking-service only reads and aggregates events (no heavy business logic) |
 | **Event-Driven Communication** | Kafka for all asynchronous state-change events |
@@ -28,21 +28,21 @@
   (e.g. shipment-service publishes `ShipmentStatusChanged` and tracking-service
   and notification-service consume it independently)
 
-### Planned Kafka topics
+### Kafka topics
 
 | Topic | Producer | Consumers | Payload |
 |---|---|---|---|
 | `shipment.created` | shipment-service | tracking-service, notification-service | shipmentId, customerId, createdAt |
-| `shipment.status-changed` | shipment-service, delivery-service | tracking-service, notification-service | shipmentId, oldStatus, newStatus, timestamp |
-| `delivery.assigned` | delivery-service | notification-service, tracking-service | shipmentId, agentId, assignedAt |
+| `shipment.status-changed` | shipment-service | tracking-service, notification-service | shipmentId, customerId, oldStatus, newStatus, changedAt |
+| `delivery.assigned` | delivery-service | notification-service, tracking-service | shipmentId, customerId, agentId, assignedAt |
 
 ## 3. Microservice details
 
 ### 3.1 user-service
 - CRUD for customers and delivery agents
 - Simple authentication with JWT generation and validation
-- Exposes: `POST /users`, `GET /users/{id}`, `POST /auth/login`
-- DB: PostgreSQL (`users`, `agents`)
+- Exposes: `POST /users`, `GET /users/{id}`, `GET /users/agents/available`, `PATCH /users/{id}/availability`
+- DB: PostgreSQL (`users` with role and availability fields)
 
 ### 3.2 shipment-service
 - Creates a shipment linked to a customer
@@ -54,8 +54,8 @@
 ### 3.3 delivery-service
 - Assigns an available delivery agent to a shipment
 - Simulates shipment progress (scheduled job or manual endpoint changes status)
-- Publishes `delivery.assigned` and triggers status updates via Kafka or REST to shipment-service
-- DB: PostgreSQL (`deliveries`, `agents_availability`)
+- Publishes `delivery.assigned` and triggers status updates via Feign to shipment-service
+- DB: PostgreSQL (`deliveries`)
 
 ### 3.4 tracking-service
 - Consumes all shipment-related Kafka events

@@ -4,7 +4,7 @@
 
 | Component | Choice | Rationale |
 |---|---|---|
-| Language | **Java 21 (LTS)** | Long-term support, records, virtual threads usable with Spring Boot 3.x |
+| Language | **Java 17 (LTS)** | Project baseline and Spring Boot 3.3 runtime |
 | Framework | **Spring Boot 3.3.x** | Java microservices standard |
 | Build | **Maven** (multi-module) | Single repo with one module per service = easier to manage solo than Gradle multi-repo |
 | Cloud toolkit | **Spring Cloud 2023.0.x (Leyton)** | Compatible with Spring Boot 3.3, provides Gateway / Config / OpenFeign |
@@ -67,8 +67,8 @@ Tools:
 
 | Need | Technology |
 |---|---|
-| Distributed tracing | **Zipkin** + **Micrometer Tracing (Brave)** |
-| Metrics | **Spring Boot Actuator** + **Micrometer** (+ Prometheus as optional bonus) |
+| Distributed tracing | **Zipkin** + **Micrometer Tracing (Brave), planned** |
+| Metrics | **Spring Boot Actuator** + **Micrometer, planned** |
 | Logs | Logback JSON (`logstash-logback-encoder`), viewable with `kubectl logs` locally (no ELK stack required) |
 
 ## 7. Tests
@@ -91,7 +91,7 @@ Tools:
 ## 9. Quick summary
 
 ```
-Java 21 + Spring Boot 3.3 + Spring Cloud 2023.0.x
+Java 17 + Spring Boot 3.3.4 + Spring Cloud 2023.0.6
    ├── Eureka (discovery)
    ├── Spring Cloud Gateway (API gateway)
    ├── Spring Cloud Config (centralized config)

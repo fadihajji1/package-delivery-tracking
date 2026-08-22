@@ -18,6 +18,8 @@ The repository is a Maven multi-module Spring Boot project. Key service modules 
 - `user-service`
 - `shipment-service`
 - `tracking-service`
+- `delivery-service`
+- `notification-service`
 
 Each service has its own `application.yml` and is configured to register with Eureka.
 
@@ -42,6 +44,10 @@ This starts the local infrastructure used by the services:
 
 - `postgres-users` (PostgreSQL for `user-service`)
 - `postgres-shipments` (PostgreSQL for `shipment-service`)
+- `postgres-deliveries` (PostgreSQL for `delivery-service`)
+- `postgres-notifications` (PostgreSQL for `notification-service`)
+- `postgres-deliveries` (PostgreSQL for `delivery-service`, host port `5434`)
+- `postgres-notifications` (PostgreSQL for `notification-service`, host port `5435`)
 - `mongo-tracking` (MongoDB for `tracking-service`)
 - `pgadmin` (optional database UI)
 - `kafka`
@@ -65,6 +71,8 @@ The services must be started in this order:
 4. `user-service` (port `8081`)
 5. `shipment-service` (port `8082`)
 6. `tracking-service` (port `8083`)
+7. `delivery-service` (port `8084`)
+8. `notification-service` (port `8085`)
 
 Each module is started from the root with the Maven wrapper.
 
@@ -88,6 +96,8 @@ mvnw.cmd -pl api-gateway spring-boot:run
 mvnw.cmd -pl user-service spring-boot:run
 mvnw.cmd -pl shipment-service spring-boot:run
 mvnw.cmd -pl tracking-service spring-boot:run
+mvnw.cmd -pl delivery-service spring-boot:run
+mvnw.cmd -pl notification-service spring-boot:run
 ```
 
 > Tip: open a separate terminal for each service so you can monitor logs independently.
@@ -100,6 +110,8 @@ mvnw.cmd -pl tracking-service spring-boot:run
 - `user-service`: user and agent management.
 - `shipment-service`: shipment creation, status progression and Kafka event production.
 - `tracking-service`: consumes Kafka events and exposes shipment tracking data.
+- `delivery-service`: assigns available agents and progresses shipment delivery status.
+- `notification-service`: consumes business events and stores simulated notification history.
 
 ## 6. Verify the system
 
@@ -131,6 +143,12 @@ Repeat the same steps to add the shipment PostgreSQL server:
 - Port: `5432`
 - Username: `postgres`
 - Password: `postgres`
+
+Repeat for the additional PostgreSQL databases:
+
+- Name: `postgres-deliveries`, host: `postgres-deliveries`, port: `5432`, database: `deliveries_db`
+- Name: `postgres-notifications`, host: `postgres-notifications`, port: `5432`, database: `notifications_db`
+- Username: `postgres`, password: `postgres`
 
 > Note: Use the Docker service names (`postgres-users` and `postgres-shipments`) as the host names because pgAdmin runs in a container on the same Docker network.
 
@@ -189,3 +207,23 @@ To build without tests:
 - If you change ports or service names, update the corresponding config files.
 - If a service fails to start, check the logs for connection issues to Eureka, Config Server, Kafka, or PostgreSQL/MongoDB.
 - Use the service-specific `application.yml` files to confirm ports and external dependencies.
+
+## 10. Troubleshooting PostgreSQL IDs
+
+### Symptom
+
+If an ID in one service appears to continue from the ID used by another service. For example, a first created user take ID `1`, but first shipment may have ID `2`, and a delivery may have ID `3`.
+<mark>Meaning each services relies on previous one in incrementing IDs  </mark> 
+
+### Reset tables without removing Docker volumes
+
+If the databases should remain but their table data should be cleared, connect to each database and run the appropriate command:
+
+```sql
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+TRUNCATE TABLE shipments RESTART IDENTITY CASCADE;
+TRUNCATE TABLE deliveries RESTART IDENTITY CASCADE;
+TRUNCATE TABLE notifications RESTART IDENTITY CASCADE;
+```
+
+**Warning:** Do not run these commands against shared or production databases. They permanently delete the table records.

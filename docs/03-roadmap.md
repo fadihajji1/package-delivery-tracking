@@ -7,7 +7,7 @@ Each phase is designed to finish with a **working, demonstrable milestone**, not
 
 ## Phase 0 — Preparation (2-3 days)
 
-- [ ] Create the Git repository (Maven multi-module monorepo)
+- [x] Create the Git repository (Maven multi-module monorepo)
 - [ ] Directory structure:
 ```
 package-delivery-tracking/
@@ -23,8 +23,8 @@ package-delivery-tracking/
 ├── k8s/                        (Kubernetes manifests)
 └── docs/                       (these markdown files)
 ```
-- [ ] Write a `docker-compose.yml` for PostgreSQL, MongoDB, Kafka + KRaft, Kafka UI, Zipkin
-- [ ] Verify local infrastructure starts successfully (`docker compose up`)
+- [x] Write a `docker-compose.yml` for PostgreSQL, MongoDB, Kafka + KRaft, Kafka UI
+- [x] Verify local infrastructure starts successfully (`docker compose up`)
 
 **End of phase deliverable**: local infra is up and the repository structure is in place.
 
@@ -52,11 +52,11 @@ package-delivery-tracking/
 
 ## Phase 2 — user-service (week 2)
 
-- [ ] JPA entities: `User`, `Agent`
-- [ ] CRUD endpoints: `POST /users`, `GET /users/{id}`, `GET /agents/available`
+- [x] JPA user entity with customer/agent roles and availability
+- [x] CRUD and availability endpoints: `POST /users`, `GET /users/{id}`, `GET /users/agents/available`
 - [ ] Simple authentication: `POST /auth/login` → issues a JWT (using `jjwt`)
-- [ ] Connect to PostgreSQL, run migrations with **Flyway**
-- [ ] Register with Eureka and fetch config from Config Server
+- [x] Connect to PostgreSQL, run migrations with **Flyway**
+- [x] Register with Eureka and fetch config from Config Server
 - [ ] Unit tests for service layer + integration tests with Testcontainers PostgreSQL
 
 **Deliverable**: user service is functional, tested, registered in Eureka, and reachable via the Gateway.
@@ -65,11 +65,11 @@ package-delivery-tracking/
 
 ## Phase 3 — shipment-service (week 3)
 
-- [ ] `Shipment` entity with status enum: CREATED, PICKED_UP, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, FAILED
-- [ ] Endpoint `POST /shipments` (creates shipment, validates customer via Feign call to user-service)
-- [ ] Integrate **OpenFeign** + **Resilience4j** (Circuit Breaker) for user-service calls
-- [ ] Endpoint `PATCH /shipments/{id}/status` to change shipment status
-- [ ] Configure Kafka producer and publish `shipment.created` and `shipment.status-changed` events
+- [x] `Shipment` entity with status enum: CREATED, PICKED_UP, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, FAILED
+- [x] Endpoint `POST /shipments` with Feign customer validation
+- [x] Integrate **OpenFeign** + **Resilience4j** circuit breaker
+- [x] Endpoint `PATCH /shipments/{id}/status` to change shipment status
+- [x] Publish `shipment.created` and `shipment.status-changed` events
 - [ ] Integration tests with Testcontainers (PostgreSQL + Kafka)
 
 **Deliverable**: end-to-end shipment creation with resilient user-service validation and Kafka event publishing.
@@ -78,10 +78,10 @@ package-delivery-tracking/
 
 ## Phase 4 — tracking-service (week 4)
 
-- [ ] Connect to MongoDB using Spring Data MongoDB
-- [ ] Kafka consumer for topics `shipment.created`, `shipment.status-changed`, `delivery.assigned`
-- [ ] Build a `TrackingRecord` document per shipment with event history array
-- [ ] Endpoint `GET /tracking/{shipmentId}` returns full shipment timeline
+- [x] Connect to MongoDB using Spring Data MongoDB
+- [x] Consume `shipment.created`, `shipment.status-changed`, and `delivery.assigned`
+- [x] Build a `TrackingRecord` document per shipment with event history array
+- [x] Endpoint `GET /tracking/{shipmentId}` returns full shipment timeline
 - [ ] Integration tests with Testcontainers (MongoDB + Kafka)
 
 **Deliverable**: real-time shipment history tracking using Kafka events.
@@ -90,10 +90,10 @@ package-delivery-tracking/
 
 ## Phase 5 — delivery-service (week 5)
 
-- [ ] `Delivery` entity (assigns agent to shipment)
-- [ ] Endpoint `POST /deliveries/assign`: selects an available agent via Feign to user-service and publishes `delivery.assigned`
-- [ ] Endpoint or scheduled `@Scheduled` task that simulates shipment progress and updates status via REST call to shipment-service or Kafka event
-- [ ] Circuit Breaker on calls to shipment-service/user-service
+- [x] `Delivery` entity (assigns agent to shipment)
+- [x] Endpoint `POST /deliveries`: selects or validates an agent and publishes `delivery.assigned`
+- [x] Manual progression endpoint updates shipment status via Feign
+- [x] Circuit breaker on calls to shipment-service/user-service
 
 **Deliverable**: complete scenario from shipment creation to delivery assignment to status progress and tracking update.
 
@@ -101,10 +101,10 @@ package-delivery-tracking/
 
 ## Phase 6 — notification-service (weeks 5-6)
 
-- [ ] Kafka consumer for all business topics
-- [ ] Simulate sending notifications (log + HTTP call to Mailhog locally or webhook.site)
-- [ ] Persist notification history in PostgreSQL
-- [ ] Endpoint `GET /notifications/{userId}` to view notification history
+- [x] Kafka consumer for all current business topics
+- [x] Simulate sending notifications through application logs
+- [x] Persist notification history in PostgreSQL
+- [x] Endpoint `GET /notifications/{userId}` to view notification history
 
 **Deliverable**: customer notifications for each status change, with persistent history.
 
@@ -134,7 +134,7 @@ package-delivery-tracking/
 
 ## Phase 9 — Kubernetes deployment (week 8)
 
-See `04-deploiement-kubernetes.md` for full details. Summary:
+See `04-kubernetes-deployment.md` for full details. Summary:
 
 - [ ] Install **Kind** or **Minikube**
 - [ ] Write `Deployment` and `Service` manifests for each microservice

@@ -32,8 +32,8 @@ PATCH http://localhost:8081/users/4/availability
 Content-Type: application/json
 
 {
-  "available": true
+  "available": false
 }
 
 ### Get the same user through API Gateway discovery routing
-GET http://localhost:8080/USER-SERVICE/users/1
+GET http://localhost:8080/USER-SERVICE/users/3
