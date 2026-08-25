@@ -56,4 +56,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.5</version>
+                <configuration>
+                    <from><image>eclipse-temurin:17-jre</image></from>
+                    <to><image>package-delivery/tracking-service</image></to>
+                    <container><mainClass>com.deliverytracking.trackingservice.TrackingServiceApplication</mainClass></container>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

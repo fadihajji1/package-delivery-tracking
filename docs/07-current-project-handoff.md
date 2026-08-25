@@ -109,3 +109,21 @@ Run it with:
 - Use `ErrorHandlingDeserializer` with local JSON default types and disabled type headers.
 - Keep the Spring Cloud BOM only in the root POM.
 - Use host-mapped ports for host-run applications and container ports for Docker-to-Docker connections.
+
+## Containerization Status
+
+Jib is configured for all eight service modules. Each module builds an independent image using the `eclipse-temurin:17-jre` base image and its own Spring Boot main class.
+
+Build one image:
+
+```powershell
+./mvnw.cmd -pl delivery-service compile jib:dockerBuild
+```
+
+Build every service image:
+
+```powershell
+./mvnw.cmd compile jib:dockerBuild
+```
+
+The images are created locally with names in the `package-delivery/<service-name>` namespace. The eight image builds were verified successfully.

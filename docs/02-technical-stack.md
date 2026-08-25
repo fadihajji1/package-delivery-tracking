@@ -58,7 +58,7 @@ Tools:
 
 | Component | Choice |
 |---|---|
-| Containerization | **Docker** + **Jib** (Maven plugin `com.google.cloud.tools:jib-maven-plugin`) to build images without manual Dockerfiles (faster, better cache). Manual Dockerfile is an alternative if fine-grained control is needed |
+| Containerization | **Docker** + **Jib** (Maven plugin `com.google.cloud.tools:jib-maven-plugin`) to build images without manual Dockerfiles (implemented). Manual Dockerfile is an alternative if fine-grained control is needed |
 | Registry | Docker Hub (free) or local registry (Kind/Minikube) |
 | Orchestration | **Kubernetes** — local cluster via **Kind** or **Minikube** (free, no cloud billing required) |
 | Manifest management | Raw YAML at first, then **Kustomize** for dev/prod overlays (avoids Helm complexity for a solo project) |

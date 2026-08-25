@@ -121,6 +121,25 @@ See `docs/05-contribution-guide.md` for more details on connecting tools to the 
 ./mvnw clean package -DskipTests
 ```
 
+- Build all service images locally with Jib:
+
+```powershell
+./mvnw.cmd compile jib:dockerBuild
+```
+
+This creates these local images:
+
+```text
+package-delivery/discovery-server
+package-delivery/config-server
+package-delivery/api-gateway
+package-delivery/user-service
+package-delivery/shipment-service
+package-delivery/tracking-service
+package-delivery/delivery-service
+package-delivery/notification-service
+```
+
 - Run the focused delivery-service unit tests:
 
 ```powershell

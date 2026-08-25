@@ -123,8 +123,8 @@ package-delivery-tracking/
 
 ## Phase 8 — Containerization (week 7)
 
-- [ ] Add **Jib** plugin to each Maven module (or use manual Dockerfiles if preferred)
-- [ ] Build all images: `mvn compile jib:dockerBuild`
+- [x] Add **Jib** plugin to each Maven module
+- [x] Build all images: `mvn compile jib:dockerBuild`
 - [ ] Verify each service runs correctly in its container
 - [ ] Push images to Docker Hub or a local Kind registry
 
