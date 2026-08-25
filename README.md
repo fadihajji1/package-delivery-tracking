@@ -168,3 +168,5 @@ kubectl apply -k k8s/overlays/dev
 ```
 
 The API Gateway is exposed through NodePort `30080`. Alternatively, use `kubectl port-forward svc/api-gateway 8080:8080 -n delivery-tracking`.
+
+Kind or Minikube must be installed and configured before applying these manifests. They use `imagePullPolicy: Never`, so local Jib images must be loaded into the cluster first.

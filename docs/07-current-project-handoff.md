@@ -133,3 +133,5 @@ The images are created locally with names in the `package-delivery/<service-name
 Local development manifests are available under `k8s/`. They include the eight application services, four PostgreSQL databases, MongoDB, persistent single-node Kafka, Zipkin, ConfigMaps, Secrets, a gateway NodePort, an Ingress definition, and a `dev` Kustomize overlay.
 
 The manifests use `imagePullPolicy: Never`, so local Jib images must be loaded into a Kind cluster before applying them. The Kubernetes deployment itself still needs live cluster validation.
+
+The development overlay rendered successfully with `kubectl kustomize k8s/overlays/dev`. Kind, Minikube, and an active Kubernetes context are not currently available on the development machine, so live deployment validation remains pending.

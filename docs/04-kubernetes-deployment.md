@@ -15,6 +15,8 @@ Starting command (Kind):
 kind create cluster --name delivery-tracking --config kind-config.yaml
 ```
 
+The repository provides local development manifests, but Kind or Minikube must be installed and configured before deployment.
+
 ## 2. Manifest organization (Kustomize)
 
 The current development manifests are available under `k8s/`:
@@ -34,34 +36,17 @@ k8s/
 
 These manifests are sized for local Kind or Minikube use. They are not production database operators or highly available Kafka.
 
+Render the development overlay without connecting to a cluster:
+
+```powershell
+kubectl kustomize k8s/overlays/dev
 ```
-k8s/
-├── base/
-│   ├── config-server/
-│   │   ├── deployment.yaml
-│   │   └── service.yaml
-│   ├── discovery-server/
-│   ├── api-gateway/
-│   ├── user-service/
-│   ├── shipment-service/
-│   ├── delivery-service/
-│   ├── tracking-service/
-│   ├── notification-service/
-│   ├── postgres/
-│   ├── mongodb/
-│   ├── kafka/
-│   ├── zipkin/
-│   └── kustomization.yaml
-└── overlays/
-    ├── dev/
-    │   └── kustomization.yaml   (patches: replicas=1, reduced resources)
-    └── prod/
-        └── kustomization.yaml   (patches: replicas=2+, increased resources)
-```
+
+After creating a cluster, load the local Jib images and apply the overlay as described in the deployment section below.
 
 ## 3. Example manifest — user-service
 
-**`k8s/base/user-service/deployment.yaml`**
+**Example user-service deployment**
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
