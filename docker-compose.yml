@@ -77,6 +77,8 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
@@ -101,6 +103,12 @@ services:
     depends_on:
       - kafka
 
+  zipkin:
+    image: openzipkin/zipkin:3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
 volumes:
   postgres-users-data:
   postgres-shipments-data:
@@ -108,3 +116,4 @@ volumes:
   postgres-notifications-data:
   mongo-tracking-data:
   pgadmin-data:
+  kafka-data:
