@@ -121,6 +121,12 @@ See `docs/05-contribution-guide.md` for more details on connecting tools to the 
 ./mvnw clean package -DskipTests
 ```
 
+- Run the focused delivery-service unit tests:
+
+```powershell
+./mvnw.cmd -pl delivery-service -Dtest=DeliveryAssignmentServiceTest test
+```
+
 ## Where to read more
 
 See the `docs/` folder for architecture, technical stack, roadmap, Kubernetes deployment and contribution guide.

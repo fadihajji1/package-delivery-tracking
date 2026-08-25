@@ -77,12 +77,31 @@ The Windows helper is `start-all.ps1`; it uses `mvnw.cmd` and launches all eight
 
 ## Remaining Work
 
-- Add unit and integration tests, preferably with Testcontainers.
+- Expand automated unit and integration tests, preferably with Testcontainers for PostgreSQL, MongoDB, and Kafka.
 - Add Actuator health and metrics endpoints.
 - Add Zipkin distributed tracing.
 - Containerize services with Jib or Dockerfiles.
 - Add Kubernetes manifests and Kustomize overlays.
 - Add automated end-to-end tests and final report documentation.
+
+## Automated Tests Added
+
+The first focused unit test suite is available at:
+
+`delivery-service/src/test/java/com/deliverytracking/deliveryservice/service/DeliveryAssignmentServiceTest.java`
+
+It verifies:
+
+- Explicit agent validation during assignment.
+- Automatic selection of the first available agent.
+- Failure when no agent is available.
+- Mapping `COMPLETED` delivery status to `DELIVERED` shipment status.
+
+Run it with:
+
+```powershell
+./mvnw.cmd -pl delivery-service -Dtest=DeliveryAssignmentServiceTest test
+```
 
 ## Development Rules
 
