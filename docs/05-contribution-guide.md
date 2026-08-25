@@ -44,8 +44,6 @@ This starts the local infrastructure used by the services:
 
 - `postgres-users` (PostgreSQL for `user-service`)
 - `postgres-shipments` (PostgreSQL for `shipment-service`)
-- `postgres-deliveries` (PostgreSQL for `delivery-service`)
-- `postgres-notifications` (PostgreSQL for `notification-service`)
 - `postgres-deliveries` (PostgreSQL for `delivery-service`, host port `5434`)
 - `postgres-notifications` (PostgreSQL for `notification-service`, host port `5435`)
 - `mongo-tracking` (MongoDB for `tracking-service`)
@@ -85,6 +83,8 @@ Each module is started from the root with the Maven wrapper.
 ./mvnw -pl user-service spring-boot:run
 ./mvnw -pl shipment-service spring-boot:run
 ./mvnw -pl tracking-service spring-boot:run
+./mvnw -pl delivery-service spring-boot:run
+./mvnw -pl notification-service spring-boot:run
 ```
 
 ### Windows
@@ -150,7 +150,7 @@ Repeat for the additional PostgreSQL databases:
 - Name: `postgres-notifications`, host: `postgres-notifications`, port: `5432`, database: `notifications_db`
 - Username: `postgres`, password: `postgres`
 
-> Note: Use the Docker service names (`postgres-users` and `postgres-shipments`) as the host names because pgAdmin runs in a container on the same Docker network.
+> Note: Use Docker service names as host names because pgAdmin runs in a container on the same Docker network. Use port `5432` inside pgAdmin; host ports `5434` and `5435` are for applications running on the host.
 
 ## Connect to MongoDB (tracking-service)
 
@@ -190,7 +190,33 @@ To build without tests:
 ./mvnw clean package -DskipTests
 ```
 
-## 8. Common development workflow
+To build all service Docker images with Jib:
+
+```powershell
+./mvnw.cmd compile jib:dockerBuild
+```
+
+To run the focused delivery-service unit tests:
+
+```powershell
+./mvnw.cmd -pl delivery-service -Dtest=DeliveryAssignmentServiceTest test
+```
+
+## 8. Observability and container checks
+
+Each service exposes Actuator endpoints after startup:
+
+```text
+http://localhost:<service-port>/actuator/health
+http://localhost:<service-port>/actuator/metrics
+http://localhost:<service-port>/actuator/prometheus
+```
+
+Zipkin is available at `http://localhost:9411`. Services export tracing spans to Zipkin when the container is running.
+
+Kafka data is persisted in the `kafka-data` Docker volume. Do not remove volumes when restarting infrastructure unless you intentionally want to delete local Kafka data.
+
+## 9. Common development workflow
 
 1. Pull the latest branch.
 2. Start the infrastructure with `docker compose up -d`.
@@ -201,19 +227,40 @@ To build without tests:
 7. Run the module locally with `spring-boot:run` or build the project.
 8. Verify behavior through the gateway or direct service endpoints.
 
-## 9. Notes for contributors
+## 10. Notes for contributors
 
 - Services use local database and Kafka addresses from `application.yml`.
 - If you change ports or service names, update the corresponding config files.
 - If a service fails to start, check the logs for connection issues to Eureka, Config Server, Kafka, or PostgreSQL/MongoDB.
 - Use the service-specific `application.yml` files to confirm ports and external dependencies.
 
-## 10. Troubleshooting PostgreSQL IDs
+## 11. Troubleshooting PostgreSQL IDs
 
 ### Symptom
 
-If an ID in one service appears to continue from the ID used by another service. For example, a first created user take ID `1`, but first shipment may have ID `2`, and a delivery may have ID `3`.
-<mark>Meaning each services relies on previous one in incrementing IDs  </mark> 
+<mark>An ID in one service may appear to continue from an ID used by another service. For example, a first user may have ID `1`, while a later shipment or delivery may have a larger ID.</mark>
+
+> **Warning:** This does not mean that services share ID sequences. Each service has its own PostgreSQL database and its own table sequence. The number only continues when earlier records already exist in that service database.
+
+The project uses `@GeneratedValue(strategy = GenerationType.IDENTITY)` and PostgreSQL `BIGSERIAL`. Docker named volumes preserve records and sequence values across container restarts.
+
+To inspect the current records:
+
+```powershell
+docker exec postgres-users psql -U postgres -d users_db -c "SELECT id, name, email, role, available FROM users ORDER BY id;"
+docker exec postgres-shipments psql -U postgres -d shipments_db -c "SELECT id, customer_id, status FROM shipments ORDER BY id;"
+docker exec postgres-deliveries psql -U postgres -d deliveries_db -c "SELECT id, shipment_id, agent_id, status FROM deliveries ORDER BY id;"
+docker exec postgres-notifications psql -U postgres -d notifications_db -c "SELECT id, user_id, shipment_id, event_type FROM notifications ORDER BY id;"
+```
+
+To reset all local databases and Kafka data:
+
+```powershell
+docker compose down -v
+docker compose up -d
+```
+
+After restarting the Spring Boot services, Flyway recreates the schemas and new records normally begin at ID `1`.
 
 ### Reset tables without removing Docker volumes
 
@@ -226,4 +273,4 @@ TRUNCATE TABLE deliveries RESTART IDENTITY CASCADE;
 TRUNCATE TABLE notifications RESTART IDENTITY CASCADE;
 ```
 
-**Warning:** Do not run these commands against shared or production databases. They permanently delete the table records.
+> **Warning:** Do not run these commands against shared or production databases. They permanently delete the table records.

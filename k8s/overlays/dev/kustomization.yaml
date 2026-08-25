@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: delivery-tracking
+
+resources:
+  - ../../base
+
+images:
+  - name: package-delivery/discovery-server
+    newTag: latest
+  - name: package-delivery/config-server
+    newTag: latest
+  - name: package-delivery/api-gateway
+    newTag: latest
+  - name: package-delivery/user-service
+    newTag: latest
+  - name: package-delivery/shipment-service
+    newTag: latest
+  - name: package-delivery/tracking-service
+    newTag: latest
+  - name: package-delivery/delivery-service
+    newTag: latest
+  - name: package-delivery/notification-service
+    newTag: latest

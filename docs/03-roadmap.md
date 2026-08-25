@@ -137,12 +137,12 @@ package-delivery-tracking/
 See `04-kubernetes-deployment.md` for full details. Summary:
 
 - [ ] Install **Kind** or **Minikube**
-- [ ] Write `Deployment` and `Service` manifests for each microservice
+- [x] Write `Deployment` and `Service` manifests for each microservice
 - [ ] Use `StatefulSet` or simple deployments for PostgreSQL/MongoDB/Kafka, or reuse Helm charts for infrastructure
-- [ ] Use `ConfigMap` / `Secret` for sensitive values
-- [ ] Expose the API Gateway via `Ingress` or `NodePort`
-- [ ] Use liveness/readiness probes based on Actuator
-- [ ] Organize with **Kustomize** (base + dev overlay)
+- [x] Use `ConfigMap` / `Secret` for sensitive values
+- [x] Expose the API Gateway via `Ingress` or `NodePort`
+- [x] Use readiness probes based on Actuator
+- [x] Organize with **Kustomize** (base + dev overlay)
 
 **Deliverable**: the full system runs on a local Kubernetes cluster and is accessible via Ingress/NodePort.
 

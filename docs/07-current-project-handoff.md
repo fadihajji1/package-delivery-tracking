@@ -81,7 +81,7 @@ The Windows helper is `start-all.ps1`; it uses `mvnw.cmd` and launches all eight
 - Add Actuator health and metrics endpoints.
 - Add Zipkin distributed tracing.
 - Containerize services with Jib or Dockerfiles.
-- Add Kubernetes manifests and Kustomize overlays.
+- Validate the local Kubernetes manifests on Kind or Minikube and add production hardening.
 - Add automated end-to-end tests and final report documentation.
 
 ## Automated Tests Added
@@ -127,3 +127,9 @@ Build every service image:
 ```
 
 The images are created locally with names in the `package-delivery/<service-name>` namespace. The eight image builds were verified successfully.
+
+## Kubernetes Status
+
+Local development manifests are available under `k8s/`. They include the eight application services, four PostgreSQL databases, MongoDB, persistent single-node Kafka, Zipkin, ConfigMaps, Secrets, a gateway NodePort, an Ingress definition, and a `dev` Kustomize overlay.
+
+The manifests use `imagePullPolicy: Never`, so local Jib images must be loaded into a Kind cluster before applying them. The Kubernetes deployment itself still needs live cluster validation.

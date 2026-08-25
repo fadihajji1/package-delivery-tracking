@@ -149,3 +149,22 @@ package-delivery/notification-service
 ## Where to read more
 
 See the `docs/` folder for architecture, technical stack, roadmap, Kubernetes deployment and contribution guide.
+
+## Kubernetes development deployment
+
+Local Kind/Minikube manifests are under `k8s/`. Build the service images, load them into Kind, and apply the development overlay:
+
+```powershell
+./mvnw.cmd compile jib:dockerBuild
+kind load docker-image package-delivery/discovery-server:latest --name delivery-tracking
+kind load docker-image package-delivery/config-server:latest --name delivery-tracking
+kind load docker-image package-delivery/api-gateway:latest --name delivery-tracking
+kind load docker-image package-delivery/user-service:latest --name delivery-tracking
+kind load docker-image package-delivery/shipment-service:latest --name delivery-tracking
+kind load docker-image package-delivery/tracking-service:latest --name delivery-tracking
+kind load docker-image package-delivery/delivery-service:latest --name delivery-tracking
+kind load docker-image package-delivery/notification-service:latest --name delivery-tracking
+kubectl apply -k k8s/overlays/dev
+```
+
+The API Gateway is exposed through NodePort `30080`. Alternatively, use `kubectl port-forward svc/api-gateway 8080:8080 -n delivery-tracking`.

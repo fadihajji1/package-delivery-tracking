@@ -17,6 +17,23 @@ kind create cluster --name delivery-tracking --config kind-config.yaml
 
 ## 2. Manifest organization (Kustomize)
 
+The current development manifests are available under `k8s/`:
+
+```text
+k8s/
+├── base/
+│   ├── apps.yaml              # eight application Deployments and Services
+│   ├── databases.yaml         # four PostgreSQL databases and MongoDB
+│   ├── kafka.yaml             # single-node Kafka KRaft with PVC
+│   ├── zipkin.yaml
+│   ├── configmap.yaml
+│   ├── secrets.yaml
+│   └── kustomization.yaml
+└── overlays/dev/kustomization.yaml
+```
+
+These manifests are sized for local Kind or Minikube use. They are not production database operators or highly available Kafka.
+
 ```
 k8s/
 ├── base/
@@ -117,8 +134,20 @@ spec:
       targetPort: 8081
 ```
 
-> These manifests are planned. The same pattern will apply to `shipment-service`, `delivery-service`, `tracking-service`
-> (with `MONGODB_URI` instead of `DATASOURCE`) and `notification-service`.
+The repository base uses the same pattern for all application services and overrides host-local URLs with Kubernetes service names.
+
+Before applying the development overlay with Kind, load the locally built Jib images:
+
+```powershell
+kind load docker-image package-delivery/discovery-server:latest --name delivery-tracking
+kind load docker-image package-delivery/config-server:latest --name delivery-tracking
+kind load docker-image package-delivery/api-gateway:latest --name delivery-tracking
+kind load docker-image package-delivery/user-service:latest --name delivery-tracking
+kind load docker-image package-delivery/shipment-service:latest --name delivery-tracking
+kind load docker-image package-delivery/tracking-service:latest --name delivery-tracking
+kind load docker-image package-delivery/delivery-service:latest --name delivery-tracking
+kind load docker-image package-delivery/notification-service:latest --name delivery-tracking
+```
 
 ## 4. External infrastructure (Postgres / MongoDB / Kafka)
 
@@ -197,6 +226,8 @@ kubectl logs -f deployment/shipment-service  # live logs
 k9s                                          # interactive navigation (strongly recommended)
 kubectl port-forward svc/api-gateway 8080:8080   # quick local access without Ingress
 ```
+
+The base exposes the API Gateway as NodePort `30080` and defines `delivery-tracking.local` for an Ingress controller. With port-forwarding, use `http://localhost:8080`.
 
 ## 8. Recommended startup order (dependencies)
 
